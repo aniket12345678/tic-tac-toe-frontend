@@ -46,19 +46,6 @@ const Board = () => {
     c7: "", c8: "", c9: "",
   });
 
-  function generateAlphaNumericString() {
-    const finalArr = [
-      ...Array(9).fill('').map((_, i) => i + 1),
-      ...Array(26).fill('').map((_, i) => String.fromCharCode(i + 97)),
-      ...Array(26).fill('').map((_, i) => String.fromCharCode(i + 65))
-    ];
-    let str = '';
-    for (let i = 0; i < 6; i++) {
-      str += finalArr[Math.ceil(1 + 60 * Math.random())]
-    }
-    return `room-${str}`;
-  }
-
   const [mySymbol, setMySymbol] = useState("");
   const [turn, setTurn] = useState("X");
   const [roomId] = useState("room-123");
@@ -67,7 +54,7 @@ const Board = () => {
   useEffect(() => {
     socket.emit("join_room", roomId);
 
-    socket.on("room_full", () => {
+    socket.on("maximum_players", () => {
       setRoomFull(true);
       alert("Room is full. Please try another room.");
     });
@@ -82,7 +69,7 @@ const Board = () => {
     });
 
     return () => {
-      socket.off("room_full");
+      socket.off("maximum_players");
       socket.off("room_users");
       socket.off("next_player_turn");
     };
